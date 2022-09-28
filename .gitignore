@@ -349,6 +349,7 @@ MigrationBackup/
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
 
+.vscode
 Mapty-flowchart.png
 Mapty-architecture-part-1.png
 Mapty-architecture-final.png

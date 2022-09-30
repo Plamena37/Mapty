@@ -1,4 +1,4 @@
-# Mapty
+# [Mapty](https://plamena37.github.io/Mapty/) 
 
 ### Map your workouts 🏃‍♀️
 

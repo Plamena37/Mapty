@@ -20,6 +20,7 @@ class Workout {
     this.duration = duration; // in min
   }
 
+  //****************************************************************************
   _setDescription() {
     // prettier-ignore
     const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -29,6 +30,7 @@ class Workout {
     } ${this.date.getDate()}`;
   }
 
+  //****************************************************************************
   click() {
     this.clicks++;
   }
@@ -66,10 +68,6 @@ class Cycling extends Workout {
     return this.speed;
   }
 }
-// const run1 = new Running([39, -12], 5.2, 24, 178);
-// const cycling1 = new Cycling([39, -12], 27, 95, 523);
-// console.log(run1);
-// console.log(cycling1);
 
 /////////////////////////////////////////////////////////
 //  APPLICATION ARCHITECTURE
@@ -81,7 +79,13 @@ class App {
   #workouts = [];
 
   constructor() {
+    // Get user's position
     this._getPosition();
+
+    // Get data from local storage
+    this._getLocaleStorage();
+
+    // Attach event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
@@ -117,6 +121,11 @@ class App {
 
     // Handling clicks on map
     this.#map.on('click', this._showForm.bind(this));
+
+    // Rendering the markers after the map is loaded
+    this.#workouts.forEach(work => {
+      this._renderWorkoutMarker(work);
+    });
   }
 
   //****************************************************************************
@@ -194,7 +203,6 @@ class App {
 
     // Add new object to workout array
     this.#workouts.push(workout);
-    console.log(workout);
 
     // Render workout on map as marker
     this._renderWorkoutMarker(workout);
@@ -204,6 +212,9 @@ class App {
 
     // Hide form + clear input fields
     this._hideForm();
+
+    // Set local storage to all workouts
+    this._setLocaleStorage();
   }
 
   //****************************************************************************
@@ -280,6 +291,7 @@ class App {
     form.insertAdjacentHTML('afterend', html);
   }
 
+  //****************************************************************************
   _moveToPopup(e) {
     const workoutEl = e.target.closest('.workout');
 
@@ -299,7 +311,33 @@ class App {
     });
 
     // using the public interface
-    workout.click();
+    // workout.click();
+  }
+
+  //****************************************************************************
+  _setLocaleStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+
+  //****************************************************************************
+  _getLocaleStorage() {
+    const data = JSON.parse(localStorage.getItem('workouts'));
+
+    if (!data) {
+      return;
+    }
+
+    this.#workouts = data;
+
+    this.#workouts.forEach(work => {
+      this._renderWorkout(work);
+    });
+  }
+
+  //****************************************************************************
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
   }
 }
 
